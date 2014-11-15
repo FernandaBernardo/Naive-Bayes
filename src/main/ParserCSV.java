@@ -24,7 +24,7 @@ public class ParserCSV {
 			}
 			sc.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 	}
 	

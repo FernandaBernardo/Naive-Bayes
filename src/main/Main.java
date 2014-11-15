@@ -25,6 +25,8 @@ public class Main {
 		int happyCount = count( trainingList, true );
 		int sadCount = count( trainingList, false );
 		ClassesProbabilities probabilities = new ClassesProbabilities( vocabulary, happyCount, sadCount );
+		log( "Happy class probability: %.2f%%", probabilities.getHappyProbability() * 100);
+		log( "Sad class probability: %.2f%%", probabilities.getSadProbability() * 100);
 		return new NaiveBayesClassifier( probabilities );
 	}
 	
@@ -53,9 +55,9 @@ public class Main {
 		List<Boolean> classifications = classifier.classify( testList );
 		
 		final double accuracy = getAccuracy( classifications, testList );
-		log( "Classified with %.2f%% of accuracy", accuracy*100 );
+		log( "\nClassified with %.2f%% of accuracy", accuracy * 100 );
 		long endOfProgram= System.currentTimeMillis();
-		log( "Total time: %ds", (endOfProgram - begin)/1000);
+		log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
 	}
 
 	private static double getAccuracy(final List<Boolean> classifications, final List<Tweet> testList) {
