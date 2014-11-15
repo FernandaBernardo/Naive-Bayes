@@ -101,5 +101,3 @@ public class Main {
 		System.out.printf(message+"\n", args);
 	}
 }
-
-
