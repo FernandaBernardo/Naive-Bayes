@@ -7,7 +7,7 @@ public class Main {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		ParserCSV parser = new ParserCSV(new File("C:/Users/RenanS/Downloads/data.csv"));
+		ParserCSV parser = new ParserCSV(new File("data.csv"));
 		
 		long begin = System.currentTimeMillis();
 		
