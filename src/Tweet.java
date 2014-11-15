@@ -16,7 +16,7 @@ public class Tweet {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public boolean isSentiment() {
+	public boolean isHappy() {
 		return sentiment;
 	}
 	public void setSentiment(boolean sentiment) {

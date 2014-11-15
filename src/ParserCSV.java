@@ -1,9 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class ParserCSV {
 	private File file;
@@ -37,10 +37,23 @@ public class ParserCSV {
 				text += "," + split[i];
 			}
 		}
-		return new Tweet(id, sentiment, text);
+		return new Tweet(id, sentiment, text.toLowerCase());
 	}
 
 	public List<Tweet> getTweets() {
 		return tweets;
+	}
+	
+	public static void main(String[] args) {
+		HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
+		for(int i=0; i<3; i++){
+			if(hashMap.get("fernanda")!= null) {
+				hashMap.put("fernanda", hashMap.get("fernanda")+1);
+			} else {
+				hashMap.put("fernanda", 1);
+			}
+		}
+		hashMap.put("caio", +1);
+		System.out.println(hashMap.get("fernanda"));
 	}
 }
