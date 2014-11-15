@@ -3,11 +3,16 @@ import java.util.List;
 import java.util.Map;
 
 public class Vocabulary {
-	private HashMap<String, Integer> happyVocabulary;
-	private HashMap<String, Integer> sadVocabulary;
+	
+	private Map<String, Integer> happyVocabulary;
+	private Map<String, Integer> sadVocabulary;
+	private int nHappy;
+	private int nSad;
 
 	public Vocabulary(List<Tweet> trainingList) {
 		separateHappyAndSadVocabulary(trainingList);
+		this.nHappy = sumOccurrences( happyVocabulary );
+		this.nSad = sumOccurrences( sadVocabulary );
 	}
 	
 	public void separateHappyAndSadVocabulary(List<Tweet> trainingList) {
@@ -23,6 +28,14 @@ public class Vocabulary {
 		}
 	}
 	
+	private int sumOccurrences( final Map<String, Integer> vocabulary ) {
+		int sum = 0;
+		for (Integer value : vocabulary.values()) {
+			sum += value;
+		}
+		return sum;
+	}
+	
 	private static void addToHashMap(Map<String, Integer> vocabulary, String[] text) {
 		for (int i = 0; i<text.length; i++) {
 			if(vocabulary.get(text[i])!= null) {
@@ -33,11 +46,19 @@ public class Vocabulary {
 		}
 	}
 	
-	public HashMap<String, Integer> getHappyVocabulary() {
+	public Map<String, Integer> getHappyVocabulary() {
 		return happyVocabulary;
 	}
 	
-	public HashMap<String, Integer> getSadVocabulary() {
+	public Map<String, Integer> getSadVocabulary() {
 		return sadVocabulary;
+	}
+
+	public int getTotalHappy() {
+		return nHappy;
+	}
+
+	public int getTotalSad() {
+		return nSad;
 	}
 }

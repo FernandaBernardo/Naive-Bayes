@@ -1,39 +1,83 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
 	
+	private static long begin = System.currentTimeMillis();
+	
+	private static List<Tweet> getTweetsFromFile( final String path ) {
+		log("Running Naive Bayes Classifier with holdout sampling technique");
+		log( "Reading file from path %s", path );
+
+		ParserCSV parser = new ParserCSV( new File( path ) );
+		parser.readFile();
+		long endOfRead = System.currentTimeMillis();
+		
+		log( "Time to read file: %ds", (endOfRead-begin)/1000l );
+		
+		return parser.getTweets();
+	}
+	
+	private static NaiveBayesClassifier getNaiveBayesClassifier( final List<Tweet> trainingList ) {
+		Vocabulary vocabulary = new Vocabulary(trainingList);
+		int happyCount = count( trainingList, true );
+		int sadCount = count( trainingList, false );
+		ClassesProbabilities probabilities = new ClassesProbabilities( vocabulary, happyCount, sadCount );
+		return new NaiveBayesClassifier( probabilities );
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		ParserCSV parser = new ParserCSV(new File("data.csv"));
+		final String path;
 		
-		long begin = System.currentTimeMillis();
+		if( args.length != 0 )
+			path = args[0];
+		else
+			path = "data.csv";
 		
-		parser.readFile();
-		
-		long endofRead = System.currentTimeMillis();
-		
-		System.out.println("Time to read file: " + (endofRead-begin)/1000 + "s");
-		
-		List<Tweet> tweets = parser.getTweets();
+		List<Tweet> tweets = getTweetsFromFile( path );
 
 		HoldOut holdOut = new HoldOut(tweets);
 		
 		List<Tweet> trainingList = holdOut.getTrainingList();
 		List<Tweet> testList = holdOut.getTestList();
 		
-		System.out.println("Total size: " + tweets.size());
-		System.out.println("Training size: " + trainingList.size());
-		System.out.println("Test size: " + testList.size());
-		
-		Vocabulary vocabulary = new Vocabulary(trainingList);
-		Map<String, Integer> happyVocabulary = vocabulary.getHappyVocabulary();
-		Map<String, Integer> sadVocabulary = vocabulary.getSadVocabulary();
+		log("Total size: %d", tweets.size());
+		log("Training size: %d", trainingList.size());
+		log("Test size: %d", testList.size());
 
+		NaiveBayesClassifier classifier = getNaiveBayesClassifier( trainingList  );
+		
+		List<Boolean> classifications = classifier.classify( testList );
+		
+		final double accuracy = getAccuracy( classifications, testList );
+		log( "Classified with %.2f%% of accuracy", accuracy*100 );
 		long endOfProgram= System.currentTimeMillis();
-		System.out.println("Total time: " + (endOfProgram - begin)/1000 + "s");
+		log( "Total time: %ds", (endOfProgram - begin)/1000);
+	}
+
+	private static double getAccuracy(final List<Boolean> classifications, final List<Tweet> testList) {
+		double acc = 0d;
+		for (int i = 0; i < testList.size(); i++) {
+			if( classifications.get(i) == testList.get(i).isHappy() )
+				acc++;
+		}
+		acc = acc / classifications.size();
+		return acc;
+	}
+
+	private static int count( final List<Tweet> trainingList, final boolean countHappy ) {
+		int count = 0;
+		for (Tweet tweet : trainingList) {
+			if( tweet.isHappy() == countHappy )
+				count++;
+		}
+		return count;
+	}
+
+	private static void log( final String message, final Object... args ){
+		System.out.printf(message+"\n", args);
 	}
 }
 

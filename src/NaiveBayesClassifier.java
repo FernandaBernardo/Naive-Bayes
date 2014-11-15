@@ -1,0 +1,51 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+final class NaiveBayesClassifier {
+	
+	private final ClassesProbabilities probabilities;
+	
+	public NaiveBayesClassifier( final ClassesProbabilities probabilities ) {
+		this.probabilities = probabilities;
+	}
+
+	/**
+	 * Classifica um {@link Tweet} como "feliz" ou "falso";
+	 * <p>
+	 * <strong>NOTA:</strong> essa implementacao separa o texto do tweet
+	 * apenas por espaco " ", sem retirar pontuacoes, assim como na leitura
+	 * do arquivo de entrada.
+	 *   
+	 * @param tweet tweet a ser classificado
+	 * @return <code>true</code> se o tweet for classificado como 
+	 * "feliz" ou <code>false</code>, caso contrario
+	 */
+	public boolean classify( final Tweet tweet ){
+		final String[] text = tweet.getText().split(" ");
+		
+		double tweetHappyProbability = Math.log10( probabilities.getHappyProbability() );
+		double tweetSadProbability = Math.log10( probabilities.getSadProbability() );
+		
+		for (String word : text) {
+			tweetHappyProbability += Math.log10( probabilities.getHappyConditionalProbability( word ) );
+			tweetSadProbability += Math.log10( probabilities.getSadConditionalProbability( word ) ); 
+		}
+		
+		return tweetHappyProbability >= tweetSadProbability;
+	}
+	
+	/**
+	 * Dada uma lista de {@link Tweet}s, retorna uma lista com as 
+	 * classificacoes feitas para cada tweet. O i-esimo tweet em 
+	 * <code>tweets</code> tem a i-ésima classificacao da lista retornada.
+	 */
+	public List<Boolean> classify( final List<Tweet> tweets ){
+		final List<Boolean> classifications = new ArrayList<>();
+		for ( Tweet tweet : tweets ) {
+			classifications.add( classify( tweet ) ? Boolean.TRUE : Boolean.FALSE );
+		}
+		
+		return Collections.unmodifiableList( classifications );
+	}
+}
