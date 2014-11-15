@@ -1,7 +1,8 @@
 package main;
+import java.util.Collections;
 import java.util.List;
 
-public class HoldOut extends SamplingTechniques{
+public class HoldOut implements SamplingTechniques{
 	private List<Tweet> trainingList;
 	private List<Tweet> testList;
 	
@@ -11,7 +12,7 @@ public class HoldOut extends SamplingTechniques{
 
 	@Override
 	public void separateSets(List<Tweet> tweets) {
-		shuffle(tweets);
+		Collections.shuffle(tweets);
 		
 		int cut = (2 * tweets.size()) / 3;
 		

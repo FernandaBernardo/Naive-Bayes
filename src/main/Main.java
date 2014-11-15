@@ -8,7 +8,6 @@ public class Main {
 	private static long begin = System.currentTimeMillis();
 	
 	private static List<Tweet> getTweetsFromFile( final String path ) {
-		log("Running Naive Bayes Classifier with holdout sampling technique");
 		log( "Reading file from path %s", path );
 
 		ParserCSV parser = new ParserCSV( new File( path ) );
@@ -31,7 +30,6 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		
 		final String path;
 		
 		if( args.length != 0 )
@@ -39,6 +37,7 @@ public class Main {
 		else
 			path = "data.csv";
 		
+		log("Running Naive Bayes Classifier with holdout sampling technique");
 		List<Tweet> tweets = getTweetsFromFile( path );
 
 		HoldOut holdOut = new HoldOut(tweets);
@@ -50,12 +49,31 @@ public class Main {
 		log("Training size: %d", trainingList.size());
 		log("Test size: %d", testList.size());
 
-		NaiveBayesClassifier classifier = getNaiveBayesClassifier( trainingList  );
+		NaiveBayesClassifier classifier = getNaiveBayesClassifier( trainingList );
 		
 		List<Boolean> classifications = classifier.classify( testList );
 		
 		final double accuracy = getAccuracy( classifications, testList );
-		log( "\nClassified with %.2f%% of accuracy", accuracy * 100 );
+
+		log( "Classified with %.2f%% of accuracy", accuracy*100 );
+		
+		log("Running Naive Bayes Classifier with cross-validation sampling technique");
+		
+		CrossValidation crossValidation = new CrossValidation(tweets);
+		
+		//TODO calcular média e erro padrão
+		for (int i = 0; i < 10; i++) {
+			trainingList = crossValidation.getTrainingList();
+			testList = crossValidation.getTestList();
+			
+			log("Total size: %d", tweets.size());
+			log("Training size: %d", trainingList.size());
+			log("Test size: %d", testList.size());
+			
+			classifier = getNaiveBayesClassifier(trainingList);
+			classifications = classifier.classify(testList);
+		}
+		
 		long endOfProgram= System.currentTimeMillis();
 		log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
 	}
