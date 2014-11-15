@@ -1,12 +1,13 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
+	
 	public static void main(String[] args) throws FileNotFoundException {
-		ParserCSV parser = new ParserCSV(new File("data.csv"));
+		
+		ParserCSV parser = new ParserCSV(new File("C:/Users/RenanS/Downloads/data.csv"));
 		
 		long begin = System.currentTimeMillis();
 		
