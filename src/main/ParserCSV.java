@@ -1,6 +1,7 @@
 package main;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,7 +17,7 @@ public class ParserCSV {
 	
 	public void readFile() {
 		try {
-			Scanner sc = new Scanner(file);
+			Scanner sc = new Scanner(file, StandardCharsets.UTF_8.name());
 			sc.nextLine();
 			while(sc.hasNextLine()) {
 				tweets.add(parseText(sc.nextLine()));
