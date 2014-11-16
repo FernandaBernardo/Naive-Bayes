@@ -35,7 +35,7 @@ final class NaiveBayesClassifier {
 	/**
 	 * Dada uma lista de {@link Tweet}s, retorna uma lista com as 
 	 * classificacoes feitas para cada tweet. O i-esimo tweet em 
-	 * <code>tweets</code> tem a i-ésima classificacao da lista retornada.
+	 * <code>tweets</code> tem a i-esima classificacao da lista retornada.
 	 */
 	public List<Boolean> classify( final List<Tweet> tweets ){
 		final List<Boolean> classifications = new ArrayList<>();

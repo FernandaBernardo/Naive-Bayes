@@ -73,6 +73,9 @@ public final class TweetPreprocessor {
 		return this;
 	}
 
+	/**
+	 * Aplica todas as acoes de processamento especificadas na lista original.
+	 */
 	public void process() {
 		
 		for (Tweet tweet : originalTweets) {

@@ -6,6 +6,30 @@ import java.util.List;
 public class Main {
 	
 	private static long begin = System.currentTimeMillis();
+
+	public static void main(String[] args) throws FileNotFoundException {
+		final String path;
+		
+		if( args.length != 0 )
+			path = args[0];
+		else
+			path = "data.csv";
+		
+		List<Tweet> tweets = getTweetsFromFile( path );
+		
+		TweetPreprocessor.of( tweets )
+				.removeAllPunctuation()
+				.switchExtraSpaces()
+				.process();
+
+		naiveBaysClassifierWithHoldout( tweets );
+		
+		naiveBayesClassifierWithCrossValidation( tweets );
+		
+		long endOfProgram= System.currentTimeMillis();
+		log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
+	}
+
 	
 	private static List<Tweet> getTweetsFromFile( final String path ) {
 		log( "Reading file from path %s", path );
@@ -24,35 +48,42 @@ public class Main {
 		int happyCount = count( trainingList, true );
 		int sadCount = count( trainingList, false );
 		ClassesProbabilities probabilities = new ClassesProbabilities( vocabulary, happyCount, sadCount );
-		log( "Happy class probability: %.2f%%", probabilities.getHappyProbability() * 100);
-		log( "Sad class probability: %.2f%%", probabilities.getSadProbability() * 100);
+		log( "\tHappy class probability: %.2f%%", probabilities.getHappyProbability() * 100);
+		log( "\tSad class probability: %.2f%%", probabilities.getSadProbability() * 100);
 		return new NaiveBayesClassifier( probabilities );
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
-		final String path;
+
+	private static void naiveBayesClassifierWithCrossValidation( final List<Tweet> tweets ) {
+		log("Running Naive Bayes Classifier with cross-validation sampling technique");
 		
-		if( args.length != 0 )
-			path = args[0];
-		else
-			path = "data.csv";
+		CrossValidation crossValidation = new CrossValidation( tweets );
+		double[] acc = new double[10];
+
+		//TODO calcular media e erro padrao
+		for (int i = 0; i < 10; i++) {
+			log("Running k=%d iteration, using %d as test set.", i, i);
+			final List<Tweet> trainingList = crossValidation.getTrainingList();
+			final List<Tweet> testList = crossValidation.getTestList();
+			
+			NaiveBayesClassifier classifier = getNaiveBayesClassifier(trainingList);
+			final List<Boolean> classifications = classifier.classify(testList);
+			acc[i] = getAccuracy( classifications, testList );
+			log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
+		}
 		
+	}
+
+	private static void naiveBaysClassifierWithHoldout( final List<Tweet> tweets ) {
 		log("Running Naive Bayes Classifier with holdout sampling technique");
-		List<Tweet> tweets = getTweetsFromFile( path );
-		
-		TweetPreprocessor.of( tweets )
-				.removeAllPunctuation()
-				.switchExtraSpaces()
-				.process();
-		
 		HoldOut holdOut = new HoldOut( tweets );
 		
 		List<Tweet> trainingList = holdOut.getTrainingList();
 		List<Tweet> testList = holdOut.getTestList();
 		
-		log("Total size: %d", tweets.size());
-		log("Training size: %d", trainingList.size());
-		log("Test size: %d", testList.size());
+		log("\tTotal size: %d", tweets.size());
+		log("\tTraining size: %d", trainingList.size());
+		log("\tTest size: %d", testList.size());
 
 		NaiveBayesClassifier classifier = getNaiveBayesClassifier( trainingList );
 		
@@ -60,30 +91,10 @@ public class Main {
 		
 		final double accuracy = getAccuracy( classifications, testList );
 
-		log( "Classified with %.2f%% of accuracy", accuracy*100 );
-		
-		log("Running Naive Bayes Classifier with cross-validation sampling technique");
-		
-		CrossValidation crossValidation = new CrossValidation(tweets);
-		
-		//TODO calcular média e erro padrão
-		for (int i = 0; i < 10; i++) {
-			trainingList = crossValidation.getTrainingList();
-			testList = crossValidation.getTestList();
-			
-			log("Total size: %d", tweets.size());
-			log("Training size: %d", trainingList.size());
-			log("Test size: %d", testList.size());
-			
-			classifier = getNaiveBayesClassifier(trainingList);
-			classifications = classifier.classify(testList);
-		}
-		
-		long endOfProgram= System.currentTimeMillis();
-		log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
+		log( "\tClassified with %.2f%% of accuracy", accuracy*100 );
 	}
 
-	private static double getAccuracy(final List<Boolean> classifications, final List<Tweet> testList) {
+	private static double getAccuracy( final List<Boolean> classifications, final List<Tweet> testList ) {
 		double acc = 0d;
 		for (int i = 0; i < testList.size(); i++) {
 			if( classifications.get(i) == testList.get(i).isHappy() )
