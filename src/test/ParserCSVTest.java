@@ -26,7 +26,7 @@ public class ParserCSVTest {
 	@Test
 	public void firstTweet() {
 		Tweet tweet = tweets.get(0);
-		assertEquals("                    is so sad for my APL friend.............".trim().toLowerCase(), tweet.getText());
+		assertEquals("                     is so sad for my APL friend.............", tweet.getText());
 		assertEquals(1, tweet.getId());
 		assertEquals(false, tweet.isHappy());
 		
@@ -35,7 +35,7 @@ public class ParserCSVTest {
 	@Test
 	public void anyTweet() {
 		Tweet tweet = tweets.get(672785);
-		assertEquals("Evil evil back pain. Hope puppy won't demand silly long walks today".trim().toLowerCase(), tweet.getText());
+		assertEquals("Evil evil back pain. Hope puppy won't demand silly long walks today ", tweet.getText());
 		assertEquals(672786, tweet.getId());
 		assertEquals(false, tweet.isHappy());
 	}
@@ -43,7 +43,7 @@ public class ParserCSVTest {
 	@Test
 	public void lastTweet() {
 		Tweet tweet = tweets.get(tweets.size()-1);
-		assertEquals("\"Zzzzzzzzzzzzzzzzzzz, I wish \"".trim().toLowerCase(), tweet.getText());
+		assertEquals("\"Zzzzzzzzzzzzzzzzzzz, I wish \"", tweet.getText());
 		assertEquals(1578627, tweet.getId());
 		assertEquals(false, tweet.isHappy());
 	}

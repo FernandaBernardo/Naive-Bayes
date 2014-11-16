@@ -12,11 +12,7 @@ final class NaiveBayesClassifier {
 	}
 
 	/**
-	 * Classifica um {@link Tweet} como "feliz" ou "falso";
-	 * <p>
-	 * <strong>NOTA:</strong> essa implementacao separa o texto do tweet
-	 * apenas por espaco " ", sem retirar pontuacoes, assim como na leitura
-	 * do arquivo de entrada.
+	 * Classifica um {@link Tweet} como "feliz" ou "triste";
 	 *   
 	 * @param tweet tweet a ser classificado
 	 * @return <code>true</code> se o tweet for classificado como 

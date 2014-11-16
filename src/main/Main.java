@@ -39,8 +39,13 @@ public class Main {
 		
 		log("Running Naive Bayes Classifier with holdout sampling technique");
 		List<Tweet> tweets = getTweetsFromFile( path );
-
-		HoldOut holdOut = new HoldOut(tweets);
+		
+		TweetPreprocessor.of( tweets )
+				.removeAllPunctuation()
+				.switchExtraSpaces()
+				.process();
+		
+		HoldOut holdOut = new HoldOut( tweets );
 		
 		List<Tweet> trainingList = holdOut.getTrainingList();
 		List<Tweet> testList = holdOut.getTestList();

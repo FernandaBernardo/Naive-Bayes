@@ -1,8 +1,8 @@
 package main;
 
 public class Tweet {
-	private int id;
-	private boolean sentiment;
+	private final int id;
+	private final boolean sentiment;
 	private String text;
 	
 	public Tweet(int id, boolean sentiment, String text) {
@@ -14,19 +14,17 @@ public class Tweet {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public boolean isHappy() {
 		return sentiment;
 	}
-	public void setSentiment(boolean sentiment) {
-		this.sentiment = sentiment;
-	}
+	
 	public String getText() {
 		return text;
 	}
-	public void setText(String text) {
-		this.text = text;
+	
+	public void setText( final String newText ){
+		this.text = newText;
 	}
+	
 }

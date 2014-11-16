@@ -38,7 +38,7 @@ public class ParserCSV {
 				text += "," + split[i];
 			}
 		}
-		return new Tweet(id, sentiment, text.toLowerCase().trim());
+		return new Tweet(id, sentiment, text);
 	}
 
 	public List<Tweet> getTweets() {
