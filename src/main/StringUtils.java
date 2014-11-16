@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 /**
  * Classe utilitária para Strings.
  */
-public class StringUtils {
+public final class StringUtils {
 
 	public StringUtils() {
 		throw new UnsupportedOperationException();
