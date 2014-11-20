@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class Main {
+public final class Main {
 	
 	private static long begin = System.currentTimeMillis();
 
@@ -18,11 +18,11 @@ public class Main {
 		List<Tweet> tweets = getTweetsFromFile( path );
 		
 		TweetPreprocessor.of( tweets )
-				.removeAllPunctuation()
+				//.removeAllPunctuation()
 				.switchExtraSpaces()
 				.process();
 
-		naiveBaysClassifierWithHoldout( tweets );
+		naiveBayesClassifierWithHoldout( tweets );
 		
 		naiveBayesClassifierWithCrossValidation( tweets );
 		
@@ -55,9 +55,9 @@ public class Main {
 	
 
 	private static void naiveBayesClassifierWithCrossValidation( final List<Tweet> tweets ) {
-		log("Running Naive Bayes Classifier with cross-validation sampling technique");
+		log("Running Naive Bayes Classifier with 10-fold cross-validation sampling technique");
 		
-		CrossValidation crossValidation = new CrossValidation( tweets );
+		SamplingTechniques crossValidation = new CrossValidation( tweets );
 		double[] acc = new double[10];
 
 		//TODO calcular media e erro padrao
@@ -74,9 +74,9 @@ public class Main {
 		
 	}
 
-	private static void naiveBaysClassifierWithHoldout( final List<Tweet> tweets ) {
+	private static void naiveBayesClassifierWithHoldout( final List<Tweet> tweets ) {
 		log("Running Naive Bayes Classifier with holdout sampling technique");
-		HoldOut holdOut = new HoldOut( tweets );
+		SamplingTechniques holdOut = new HoldOut( tweets );
 		
 		List<Tweet> trainingList = holdOut.getTrainingList();
 		List<Tweet> testList = holdOut.getTestList();

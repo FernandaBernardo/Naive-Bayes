@@ -19,7 +19,7 @@ public final class StringUtils {
 	private static final Pattern smartPunctuationPattern = 
 			Pattern.compile(hours);
 	
-	private static final Pattern allPunctutaionPattern = Pattern.compile("(\\p{Punct}|:|(\\.+))");
+	private static final Pattern allPunctuationPattern = Pattern.compile("(\\p{Punct})");
 	
 	private static final Pattern internalExtraSpaces = Pattern.compile("\\p{Blank}+");
 	
@@ -29,7 +29,7 @@ public final class StringUtils {
 	}
 	
 	public static String removeAllPunctuation( final String string ) {
-		return allPunctutaionPattern.matcher( string ).replaceAll(" "); 
+		return allPunctuationPattern.matcher( string ).replaceAll(" "); 
 	}
 	
 	public static String removeAllInternalExtraSpaces( final String string ){

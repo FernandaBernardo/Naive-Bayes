@@ -22,9 +22,9 @@ public final class TweetPreprocessor {
 	}
 
 	/**
-	 * Constrói um {@link TweetPreprocessor}. Não tira uma cópia dos tweets do argumento,
-	 * para evitar {@link OutOfMemoryError}. Dessa forma, faz as alterações no texto da
-	 * lista do argumento.
+	 * Constroi um {@link TweetPreprocessor}. Nao tira uma copia dos tweets do argumento,
+	 * para evitar {@link OutOfMemoryError}. Dessa forma, faz as alteracoes no texto da
+	 * lista de {@link Tweet}s do argumento.
 	 * 
 	 */
 	public static TweetPreprocessor of(final List<Tweet> tweets  ) {
