@@ -60,7 +60,6 @@ public final class Main {
 		SamplingTechniques crossValidation = new CrossValidation( tweets );
 		double[] acc = new double[10];
 
-		//TODO calcular media e erro padrao
 		for (int i = 0; i < 10; i++) {
 			log("Running k=%d iteration, using %d as test set.", i, i);
 			final List<Tweet> trainingList = crossValidation.getTrainingList();
@@ -72,7 +71,18 @@ public final class Main {
 			log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
 		}
 		
+		log("\nFinal Accuracy: %.2f%%", getAccuracyAverage(acc) * 100);
+		
 	}
+
+	private static double getAccuracyAverage(double[] acc) {
+		double average = 0;
+		for (int i = 0; i < acc.length; i++) {
+			average += acc[i];
+		}
+		return (average / acc.length);
+	}
+
 
 	private static void naiveBayesClassifierWithHoldout( final List<Tweet> tweets ) {
 		log("Running Naive Bayes Classifier with holdout sampling technique");
