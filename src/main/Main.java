@@ -19,7 +19,6 @@ public final class Main {
 		
 		TweetPreprocessor.of( tweets )
 				//.removeAllPunctuation()
-				.switchExtraSpaces()
 				.process();
 
 		naiveBayesClassifierWithHoldout( tweets );

@@ -65,7 +65,7 @@ public class TweetPreprocessorTest {
 		assertEquals( "so i wrote something last week     and i got a call from someone in the new york office    http   tumblr com xcn21w6o7", tweet.getText() );
 	}
 	
-	@Ignore
+	@Ignore("Not yet implemented")
 	@Test
 	public void shouldSmartlyRemoveAllPunctuations(){
 		String text = "(: !!!!!! - so i wrote something last week. and i got a call from someone in the new york office at 18:32... http://tumblr.com/xcn21w6o7"; 
