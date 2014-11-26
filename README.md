@@ -2,7 +2,6 @@
 
 Pra fazer, relacionado a código, falta: 
 * Garantir que a entrada (por terminal) e a saída estão corretas; 
-* Remover as stop words; 
 * Gerar programas (jars no nosso caso) diferentes para cada tópico que o requisitar (tipo a Parte 3 é um jar, a 4 outro...);
 
 
