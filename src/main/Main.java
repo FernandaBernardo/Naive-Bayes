@@ -1,7 +1,11 @@
 package main;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 public final class Main {
 	
@@ -9,6 +13,7 @@ public final class Main {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		final String path;
+		final String stopWordsPath = "stopwords_en.txt";
 		
 		if( args.length != 0 )
 			path = args[0];
@@ -16,12 +21,14 @@ public final class Main {
 			path = "data.csv";
 		
 		List<Tweet> tweets = getTweetsFromFile( path );
+		// Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
 		
 		TweetPreprocessor.of( tweets )
+				.toLowerCase()
+				.removeExtraSpaces()
 				.processExpressivePunctuation()
 				.removeIrrelevantPunctuation()
-				.toLowerCase()
-				.switchExtraSpaces()
+				//.removeStopWords( stopWords )
 				.process();
 
 		naiveBayesClassifierWithHoldout( tweets );
@@ -33,6 +40,17 @@ public final class Main {
 	}
 
 	
+	private static Set<String> getStopWordsFromFile(String stopWordsPath) throws FileNotFoundException {
+		final Scanner scanner = new Scanner( new File( stopWordsPath ) ); 
+		final Set<String> stopWords = new HashSet<>();
+		while( scanner.hasNextLine() ) {
+			stopWords.add( scanner.nextLine() );
+		}
+		scanner.close();
+		return Collections.unmodifiableSet( stopWords );
+	}
+
+
 	private static List<Tweet> getTweetsFromFile( final String path ) {
 		log( "Reading file from path %s", path );
 

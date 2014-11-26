@@ -1,10 +1,12 @@
 package main;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,14 +96,14 @@ public final class TweetPreprocessor {
 	}
 	
 	/**
-	 * Substitui múltiplos espaços em branco por um único.
+	 * Substitui multiplos espaços em branco por um unico.
 	 */
-	public TweetPreprocessor switchExtraSpaces() {
+	public TweetPreprocessor removeExtraSpaces() {
 		this.actions.add( new TweetPreprocessorAction() {
 			
 			@Override
 			public String preprocess(String text) {
-				return StringUtils.removeAllInternalExtraSpaces( text );
+				return StringUtils.removeAllInternalExtraSpaces( text.trim() );
 			}
 		}); 
 				
@@ -162,6 +164,23 @@ public final class TweetPreprocessor {
 		return addPatternReplacerAction( HASHTAG_PATTERN, HASHTAG_REPLACER );
 	}
 	
+	/**
+	 * Remove pontuacao considerada irrelevante. Exemplos: 
+	 * <ul>
+	 * <li>"Therefore, blah blah" se torna "Therefore blah blah"</li>
+	 * <li>"This. Is. The. End. =(" se torna "This Is The End =("</li>
+	 * </ul> 
+	 * <p>
+	 * O objetivo pode ser definido como: remover pontuacao que torne 
+	 * diferentes palavras que deveriam ser iguais, considerando separacao
+	 * por espaco em branco.
+	 * <p>
+	 * Sao mantidas as pontuacoes que tenham expressividade (como reticencias ou emoticons), ou seja:
+	 * <ul>
+	 * <li>"In the end... it doesn't even matter..." se torna "In the end... it doesnt even matter..."</li>
+	 * <li>"Six, six, six!! The number of the beast!!!" se torna "Six six six!! The number of the beast!!!"</li>
+	 * </ul>
+	 */
 	public TweetPreprocessor removeIrrelevantPunctuation() {
 		this.actions.add( new TweetPreprocessorAction() {
 			
@@ -205,6 +224,10 @@ public final class TweetPreprocessor {
 		return this;
 	}
 
+	/**
+	 * Realiza substituicoes de pontucacoes consideradas como expressivas,
+	 * de acordo com regras do email.
+	 */
 	public TweetPreprocessor processExpressivePunctuation() {
 		this.actions.add( new TweetPreprocessorAction() {
 			private final StringBuilder result = new StringBuilder();
@@ -229,14 +252,41 @@ public final class TweetPreprocessor {
 		
 		return this;
 	}
+	
+	public TweetPreprocessor removeStopWords( final Set<String> stopWords ) {
+		final Set<String> processedStopWords = new HashSet<>( stopWords );
+		for( final String stopWord : stopWords ) {
+			if( stopWord.contains("'")) {
+				processedStopWords.add( stopWord.replaceAll("'", ""));
+			}
+		}
+		this.actions.add( new TweetPreprocessorAction() {
+			private final StringBuilder builder = new StringBuilder();
+			
+			@Override
+			public String preprocess( final String text ) {
+				final String[] terms = text.split("\\s");
+				builder.delete( 0, builder.length() );
+				for( final String term : terms ) {
+					if( ! processedStopWords.contains( term.toLowerCase() ) ) {
+						builder.append( term ).append(" ");
+					}
+				}
+				
+				return builder.toString();
+			}
+		});
+		return this;
+	}
+	
 	/**
 	 * Aplica todas as acoes de processamento especificadas na lista original.
 	 */
 	public void process() {
 		
-		for (Tweet tweet : tweets) {
+		for ( final Tweet tweet : tweets) {
 			String text = tweet.getText();
-			for ( TweetPreprocessorAction action : this.actions ) {
+			for ( final TweetPreprocessorAction action : this.actions ) {
 				text = action.preprocess( text );
 			}
 			tweet.setText( text.trim() );
