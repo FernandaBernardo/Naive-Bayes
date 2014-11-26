@@ -11,14 +11,6 @@ public final class StringUtils {
 		throw new UnsupportedOperationException();
 	}
 
-	// Em construção
-	private static final String words = "\\w";
-	private static final String hours = "[(.*)&&[^((([0-1][0-9])|(2[0-3])):([0-5][0-9]))]]";
-	private static final String urls = "((http|https|www)(://.+\\.\\.*))";
-	
-	private static final Pattern smartPunctuationPattern = 
-			Pattern.compile(hours);
-	
 	private static final Pattern allPunctuationPattern = Pattern.compile("(\\p{Punct})");
 	
 	private static final Pattern internalExtraSpaces = Pattern.compile("\\p{Blank}+");

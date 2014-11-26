@@ -20,7 +20,7 @@ final class NaiveBayesClassifier {
 	 */
 	public boolean classify( final Tweet tweet ){
 		final String[] text = tweet.getText().split(" ");
-		// Usa log para evitar underflown
+		// Usa log para evitar underflow
 		double tweetHappyProbability = Math.log10( probabilities.getHappyProbability() );
 		double tweetSadProbability = Math.log10( probabilities.getSadProbability() );
 		

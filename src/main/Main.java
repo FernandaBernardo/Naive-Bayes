@@ -18,7 +18,10 @@ public final class Main {
 		List<Tweet> tweets = getTweetsFromFile( path );
 		
 		TweetPreprocessor.of( tweets )
-				//.removeAllPunctuation()
+				.processExpressivePunctuation()
+				.removeIrrelevantPunctuation()
+				.toLowerCase()
+				.switchExtraSpaces()
 				.process();
 
 		naiveBayesClassifierWithHoldout( tweets );

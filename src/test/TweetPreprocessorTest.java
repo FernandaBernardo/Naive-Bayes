@@ -3,6 +3,10 @@ package test;
 import static org.junit.Assert.assertEquals;
 
 
+
+
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,12 +16,12 @@ import main.Tweet;
 import main.TweetPreprocessor;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TweetPreprocessorTest {
 
 	private List<Tweet> tweets;
+	private TweetPreprocessor subject;
 	
 	@Before
 	public void setUp() {
@@ -30,15 +34,16 @@ public class TweetPreprocessorTest {
 					"Lorem ipsum dolor" ) );
 		}
 		tweets = Collections.unmodifiableList( tweets );
+		subject = TweetPreprocessor.of( tweets );
 	}
 	
 	@Test
 	public void shouldNotAddOrRemoveTweets() {
 		int initialSize = tweets.size();
-		TweetPreprocessor.of( tweets )
-				.removeAllPunctuation()
-				.switchExtraSpaces()
-				.process();
+		subject
+			.removeAllPunctuation()
+			.switchExtraSpaces()
+			.process();
 		
 		assertEquals( initialSize, tweets.size() );
 	}
@@ -65,15 +70,21 @@ public class TweetPreprocessorTest {
 		assertEquals( "so i wrote something last week     and i got a call from someone in the new york office    http   tumblr com xcn21w6o7", tweet.getText() );
 	}
 	
-	@Ignore("Not yet implemented")
 	@Test
-	public void shouldSmartlyRemoveAllPunctuations(){
-		String text = "(: !!!!!! - so i wrote something last week. and i got a call from someone in the new york office at 18:32... http://tumblr.com/xcn21w6o7"; 
-		final Tweet tweet = new Tweet( 1, true, text );
-		final List<Tweet> sigleton = Collections.singletonList( tweet );
-		TweetPreprocessor.of( sigleton )
-			.smartRemovePunctuation()
+	public void shouldRemoveOnlyIrrelevantPunctuations() {
+		final String text1 = "awhhe man.... I'm completely useless rt now. "
+				+ "Funny, all I can do is twitter. http://myloc.me/27HX What else can i do??????";
+		final String text2 = "BoRinG   ): whats wrong with him??     Please tell me........   :-/";
+		final Tweet tweet1 = new Tweet( 1, false, text1 );
+		final Tweet tweet2 = new Tweet( 2, false, text2 );
+		TweetPreprocessor.of( Arrays.asList( tweet1, tweet2 ) )
+			.removeIrrelevantPunctuation()
 			.process();
-		assertEquals( "(: ! so i wrote something last week  and i got a call from someone in the new york office at 18:32    http://tumblr.com/xcn21w6o7", tweet.getText() );
+		
+		final String expected1 = "awhhe man.... Im completely useless rt now "
+				+ "Funny all I can do is twitter http://myloc.me/27HX What else can i do??????";
+		assertEquals( expected1, tweet1.getText() );
+		assertEquals( text2, tweet2.getText() );
 	}
+	
 }
