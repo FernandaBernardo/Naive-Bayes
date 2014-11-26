@@ -1,4 +1,4 @@
-NAIVE BAYES
+# Naive Bayes
 
 Pra fazer, relacionado a código, falta: 
 * Garantir que a entrada (por terminal) e a saída estão corretas; 
