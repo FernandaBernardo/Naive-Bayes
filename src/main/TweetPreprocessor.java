@@ -1,5 +1,7 @@
 package main;
 
+import static main.Main.logger;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -49,10 +51,12 @@ public final class TweetPreprocessor {
 	
 	private static interface TweetPreprocessorAction {
 		String preprocess( final String text );
+		String getName();
 	}
 	
 	private final List<Tweet> tweets;
 	private final List<TweetPreprocessorAction> actions = new LinkedList<>();
+	private final StringBuilder buffer = new StringBuilder();
 	
 	private TweetPreprocessor( final List<Tweet> tweets ) {
 		this.tweets = tweets;
@@ -68,18 +72,6 @@ public final class TweetPreprocessor {
 		return new TweetPreprocessor( tweets );
 	}
 	
-	public TweetPreprocessor smartRemovePunctuation() {
-		this.actions.add( new TweetPreprocessorAction() {
-			
-			@Override
-			public String preprocess(String text) {
-				return StringUtils.smartRemovePunctuation( text );
-			}
-		}); 
-				
-		return this;
-	}
-
 	/**
 	 * Remove toda pontuação como !;?#$, dentre outros.
 	 */
@@ -89,6 +81,11 @@ public final class TweetPreprocessor {
 			@Override
 			public String preprocess(String text) {
 				return StringUtils.removeAllPunctuation( text );
+			}
+			
+			@Override
+			public String getName() {
+				return "remove All Punctuation";
 			}
 		}); 
 				
@@ -105,6 +102,11 @@ public final class TweetPreprocessor {
 			public String preprocess(String text) {
 				return StringUtils.removeAllInternalExtraSpaces( text.trim() );
 			}
+			
+			@Override
+			public String getName() {
+				return "Remove extra (useless) spaces";
+			}
 		}); 
 				
 		return this;
@@ -119,17 +121,27 @@ public final class TweetPreprocessor {
 			public String preprocess(String text) {
 				return text.toLowerCase();
 			}
+			
+			@Override
+			public String getName() {
+				return "Transform to lower case";
+			}
 		});
 		
 		return this;
 	}
 	
-	private TweetPreprocessor addPatternReplacerAction( final Pattern pattern, final String replacer ) {
+	private TweetPreprocessor addPatternReplacerAction( final Pattern pattern, final String replacer, final String actionName ) {
 		this.actions.add( new TweetPreprocessorAction() {
 			
 			@Override
 			public String preprocess(String text) {
 				return pattern.matcher(text).replaceAll( replacer );
+			}
+			
+			@Override
+			public String getName() {
+				return actionName;
 			}
 		});
 		return this;
@@ -142,7 +154,7 @@ public final class TweetPreprocessor {
 	 * igualar todos esses termos.
 	 */
 	public TweetPreprocessor processUserReferences() {
-		return addPatternReplacerAction( USER_REFERENCE_PATTERN, USER_REFERENCE_REPLACER );
+		return addPatternReplacerAction( USER_REFERENCE_PATTERN, USER_REFERENCE_REPLACER, "Replace user references with 'usrrf'" );
 	}
 	
 	/**
@@ -151,7 +163,7 @@ public final class TweetPreprocessor {
 	 * Esse processamento objetiva igualar todos esses termos.
 	 */
 	public TweetPreprocessor processLinks() {
-		return addPatternReplacerAction( LINK_PATTERN, LINK_REPLACER );
+		return addPatternReplacerAction( LINK_PATTERN, LINK_REPLACER, "Replace links with 'lnkrf'" );
 	}
 	
 	/**
@@ -161,7 +173,7 @@ public final class TweetPreprocessor {
 	 * termos.
 	 */
 	public TweetPreprocessor processHashtags() {
-		return addPatternReplacerAction( HASHTAG_PATTERN, HASHTAG_REPLACER );
+		return addPatternReplacerAction( HASHTAG_PATTERN, HASHTAG_REPLACER, "Replace hashtag term with 'hshtg'" );
 	}
 	
 	/**
@@ -219,6 +231,11 @@ public final class TweetPreprocessor {
 				
 				return result.toString();				
 			}
+			
+			@Override
+			public String getName() {
+				return "Remove irrelevant punctuation";
+			}
 		});
 		
 		return this;
@@ -246,6 +263,11 @@ public final class TweetPreprocessor {
 				}
 				
 				return result.toString();
+			}
+			
+			@Override
+			public String getName() {
+				return "Process expressive punctuation";
 			}
 		});
 		
@@ -275,6 +297,11 @@ public final class TweetPreprocessor {
 				
 				return builder.toString();
 			}
+			
+			@Override
+			public String getName() {
+				return "Remove stop words";
+			}
 		});
 		return this;
 	}
@@ -283,13 +310,23 @@ public final class TweetPreprocessor {
 	 * Aplica todas as acoes de processamento especificadas na lista original.
 	 */
 	public void process() {
-		
-		for ( final Tweet tweet : tweets) {
+		buffer.delete( 0, buffer.length() );
+		buffer.append( "Tweet Preprocessor will execute the following algorithm:\n");
+		int counter = 0;
+		for ( TweetPreprocessorAction action : this.actions ) {
+			buffer.append("\t").append( counter ).append(". ").append( action.getName() ).append( "\n" );
+			counter++;
+		}
+		logger.log( buffer.toString() );
+		final long start = System.currentTimeMillis();
+		for( final Tweet tweet : tweets ) {
 			String text = tweet.getText();
-			for ( final TweetPreprocessorAction action : this.actions ) {
+			for( final TweetPreprocessorAction action : this.actions ) {
 				text = action.preprocess( text );
 			}
 			tweet.setText( text.trim() );
 		}
+		final long end = System.currentTimeMillis();
+		logger.log( "Tweet preprocessing took %ds", (end-start) / 1000 );
 	}
 }

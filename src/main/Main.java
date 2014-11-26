@@ -9,26 +9,33 @@ import java.util.Set;
 
 public final class Main {
 	
-	private static long begin = System.currentTimeMillis();
-
+	public static Logger logger;
+	
 	public static void main(String[] args) throws FileNotFoundException {
-		final String path;
+		final long begin = System.currentTimeMillis();
+		final String inputFilePath;
+		final String outputFilePath;
 		final String stopWordsPath = "stopwords_en.txt";
 		
-		if( args.length != 0 )
-			path = args[0];
-		else
-			path = "data.csv";
+		if( args.length > 2 ) {
+			inputFilePath = args[0];
+			outputFilePath = args[1];
+		} else {
+			inputFilePath = "data.csv";
+			outputFilePath = "defaultOutput.txt";
+		}
 		
-		List<Tweet> tweets = getTweetsFromFile( path );
-		// Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
+		logger = new Logger( outputFilePath );
+		
+		List<Tweet> tweets = getTweetsFromFile( inputFilePath );
+		Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
 		
 		TweetPreprocessor.of( tweets )
 				.toLowerCase()
 				.removeExtraSpaces()
-				.processExpressivePunctuation()
-				.removeIrrelevantPunctuation()
-				//.removeStopWords( stopWords )
+				//.processExpressivePunctuation()
+				//.removeIrrelevantPunctuation()
+				.removeStopWords( stopWords )
 				.process();
 
 		naiveBayesClassifierWithHoldout( tweets );
@@ -36,10 +43,10 @@ public final class Main {
 		naiveBayesClassifierWithCrossValidation( tweets );
 		
 		long endOfProgram= System.currentTimeMillis();
-		log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
+		logger.log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
+		logger.flush();
 	}
 
-	
 	private static Set<String> getStopWordsFromFile(String stopWordsPath) throws FileNotFoundException {
 		final Scanner scanner = new Scanner( new File( stopWordsPath ) ); 
 		final Set<String> stopWords = new HashSet<>();
@@ -52,13 +59,14 @@ public final class Main {
 
 
 	private static List<Tweet> getTweetsFromFile( final String path ) {
-		log( "Reading file from path %s", path );
+		logger.log( "Reading file from path %s", path );
 
+		final long begin = System.currentTimeMillis();
 		ParserCSV parser = new ParserCSV( new File( path ) );
 		parser.readFile();
-		long endOfRead = System.currentTimeMillis();
+		long end = System.currentTimeMillis();
 		
-		log( "Time to read file: %ds", (endOfRead-begin)/1000l );
+		logger.log( "Time to read file: %ds", (end-begin)/1000l );
 		
 		return parser.getTweets();
 	}
@@ -68,30 +76,30 @@ public final class Main {
 		int happyCount = count( trainingList, true );
 		int sadCount = count( trainingList, false );
 		ClassesProbabilities probabilities = new ClassesProbabilities( vocabulary, happyCount, sadCount );
-		log( "\tHappy class probability: %.2f%%", probabilities.getHappyProbability() * 100);
-		log( "\tSad class probability: %.2f%%", probabilities.getSadProbability() * 100);
+		logger.log( "\tHappy class probability: %.2f%%", probabilities.getHappyProbability() * 100);
+		logger.log( "\tSad class probability: %.2f%%", probabilities.getSadProbability() * 100);
 		return new NaiveBayesClassifier( probabilities );
 	}
 	
 
 	private static void naiveBayesClassifierWithCrossValidation( final List<Tweet> tweets ) {
-		log("Running Naive Bayes Classifier with 10-fold cross-validation sampling technique");
+		logger.log("Running Naive Bayes Classifier with 10-fold cross-validation sampling technique");
 		
 		SamplingTechniques crossValidation = new CrossValidation( tweets );
 		double[] acc = new double[10];
 
 		for (int i = 0; i < 10; i++) {
-			log("Running k=%d iteration, using %d as test set.", i, i);
+			logger.log("Running k=%d iteration, using %d as test set.", i, i);
 			final List<Tweet> trainingList = crossValidation.getTrainingList();
 			final List<Tweet> testList = crossValidation.getTestList();
 			
 			NaiveBayesClassifier classifier = getNaiveBayesClassifier(trainingList);
 			final List<Boolean> classifications = classifier.classify(testList);
 			acc[i] = getAccuracy( classifications, testList );
-			log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
+			logger.log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
 		}
 		
-		log("\nFinal Accuracy: %.2f%%", getAccuracyAverage(acc) * 100);
+		logger.log("\nFinal Accuracy: %.2f%%", getAccuracyAverage(acc) * 100);
 		
 	}
 
@@ -105,15 +113,15 @@ public final class Main {
 
 
 	private static void naiveBayesClassifierWithHoldout( final List<Tweet> tweets ) {
-		log("Running Naive Bayes Classifier with holdout sampling technique");
+		logger.log("Running Naive Bayes Classifier with holdout sampling technique");
 		SamplingTechniques holdOut = new HoldOut( tweets );
 		
 		List<Tweet> trainingList = holdOut.getTrainingList();
 		List<Tweet> testList = holdOut.getTestList();
 		
-		log("\tTotal size: %d", tweets.size());
-		log("\tTraining size: %d", trainingList.size());
-		log("\tTest size: %d", testList.size());
+		logger.log("\tTotal size: %d", tweets.size());
+		logger.log("\tTraining size: %d", trainingList.size());
+		logger.log("\tTest size: %d", testList.size());
 
 		NaiveBayesClassifier classifier = getNaiveBayesClassifier( trainingList );
 		
@@ -121,7 +129,7 @@ public final class Main {
 		
 		final double accuracy = getAccuracy( classifications, testList );
 
-		log( "\tClassified with %.2f%% of accuracy", accuracy*100 );
+		logger.log( "\tClassified with %.2f%% of accuracy", accuracy*100 );
 	}
 
 	private static double getAccuracy( final List<Boolean> classifications, final List<Tweet> testList ) {
@@ -141,9 +149,5 @@ public final class Main {
 				count++;
 		}
 		return count;
-	}
-
-	private static void log( final String message, final Object... args ){
-		System.out.printf(message+"\n", args);
 	}
 }
