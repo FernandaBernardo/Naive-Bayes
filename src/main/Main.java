@@ -33,14 +33,14 @@ public final class Main {
 		TweetPreprocessor.of( tweets )
 				.toLowerCase()
 				.removeExtraSpaces()
-				//.processExpressivePunctuation()
-				//.removeIrrelevantPunctuation()
+				.processExpressivePunctuation()
+				.removeIrrelevantPunctuation()
 				//.removeStopWords( stopWords )
 				.process();
 
-//		naiveBayesClassifierWithHoldout( tweets );
+		naiveBayesClassifierWithHoldout( tweets );
 		
-		naiveBayesClassifierWithCrossValidation( tweets );
+//		naiveBayesClassifierWithCrossValidation( tweets );
 		
 		long endOfProgram= System.currentTimeMillis();
 		logger.log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
@@ -97,6 +97,7 @@ public final class Main {
 			final List<Boolean> classifications = classifier.classify(testList);
 			acc[i] = getAccuracy( classifications, testList );
 			logger.log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
+			logger.log( "\tClassified with %.2f%% of true error", ( 1.0 - acc[i] ) * 100 );
 			logConfusionMatrix( classifications, testList );
 		}
 		
@@ -121,7 +122,8 @@ public final class Main {
 		
 		final double accuracy = getAccuracy( classifications, testList );
 
-		logger.log( "\tClassified with %.2f%% of accuracy", accuracy*100 );
+		logger.log( "\tClassified with %.2f%% of accuracy", accuracy * 100 );
+		logger.log( "\tClassified with %.2f%% of true error", ( 1.0 - accuracy ) * 100 );
 		logConfusionMatrix( classifications, testList );
 	}
 
