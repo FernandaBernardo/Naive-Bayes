@@ -15,6 +15,7 @@ public class CrossValidation implements SamplingTechniques{
 		numberOfTrainingFold = 0;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void separateSets(List<Tweet> tweets) {
 		Collections.shuffle(tweets);

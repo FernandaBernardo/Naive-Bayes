@@ -11,13 +11,13 @@ public final class Main {
 	
 	public static Logger logger;
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main( final String[] args ) throws FileNotFoundException {
 		final long begin = System.currentTimeMillis();
 		final String inputFilePath;
 		final String outputFilePath;
-		final String stopWordsPath = "stopwords_en.txt";
+		// final String stopWordsPath = "stopwords_en.txt";
 		
-		if( args.length > 2 ) {
+		if( args.length >= 2 ) {
 			inputFilePath = args[0];
 			outputFilePath = args[1];
 		} else {
@@ -28,17 +28,17 @@ public final class Main {
 		logger = new Logger( outputFilePath );
 		
 		List<Tweet> tweets = getTweetsFromFile( inputFilePath );
-		Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
+		//Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
 		
 		TweetPreprocessor.of( tweets )
 				.toLowerCase()
 				.removeExtraSpaces()
 				//.processExpressivePunctuation()
 				//.removeIrrelevantPunctuation()
-				.removeStopWords( stopWords )
+				//.removeStopWords( stopWords )
 				.process();
 
-		naiveBayesClassifierWithHoldout( tweets );
+//		naiveBayesClassifierWithHoldout( tweets );
 		
 		naiveBayesClassifierWithCrossValidation( tweets );
 		
@@ -47,6 +47,7 @@ public final class Main {
 		logger.flush();
 	}
 
+	@SuppressWarnings("unused")
 	private static Set<String> getStopWordsFromFile(String stopWordsPath) throws FileNotFoundException {
 		final Scanner scanner = new Scanner( new File( stopWordsPath ) ); 
 		final Set<String> stopWords = new HashSet<>();
@@ -81,7 +82,6 @@ public final class Main {
 		return new NaiveBayesClassifier( probabilities );
 	}
 	
-
 	private static void naiveBayesClassifierWithCrossValidation( final List<Tweet> tweets ) {
 		logger.log("Running Naive Bayes Classifier with 10-fold cross-validation sampling technique");
 		
@@ -97,20 +97,12 @@ public final class Main {
 			final List<Boolean> classifications = classifier.classify(testList);
 			acc[i] = getAccuracy( classifications, testList );
 			logger.log( "\tClassified with %.2f%% of accuracy", acc[i] * 100 );
+			logConfusionMatrix( classifications, testList );
 		}
 		
 		logger.log("\nFinal Accuracy: %.2f%%", getAccuracyAverage(acc) * 100);
 		
 	}
-
-	private static double getAccuracyAverage(double[] acc) {
-		double average = 0;
-		for (int i = 0; i < acc.length; i++) {
-			average += acc[i];
-		}
-		return (average / acc.length);
-	}
-
 
 	private static void naiveBayesClassifierWithHoldout( final List<Tweet> tweets ) {
 		logger.log("Running Naive Bayes Classifier with holdout sampling technique");
@@ -130,6 +122,7 @@ public final class Main {
 		final double accuracy = getAccuracy( classifications, testList );
 
 		logger.log( "\tClassified with %.2f%% of accuracy", accuracy*100 );
+		logConfusionMatrix( classifications, testList );
 	}
 
 	private static double getAccuracy( final List<Boolean> classifications, final List<Tweet> testList ) {
@@ -141,6 +134,14 @@ public final class Main {
 		acc = acc / classifications.size();
 		return acc;
 	}
+	
+	private static double getAccuracyAverage( double[] acc ) {
+		double average = 0;
+		for (int i = 0; i < acc.length; i++) {
+			average += acc[i];
+		}
+		return average / acc.length;
+	}
 
 	private static int count( final List<Tweet> trainingList, final boolean countHappy ) {
 		int count = 0;
@@ -149,5 +150,44 @@ public final class Main {
 				count++;
 		}
 		return count;
+	}
+	
+	private static void logConfusionMatrix( final List<Boolean> classifications, final List<Tweet> tweets ) {
+		double 	cell11 = 0d, // Was happy, classified as happy
+				cell12 = 0d, // Was happy, classified as sad
+				cell21 = 0d, // Was sad, classified as happy
+				cell22 = 0d; // Was sad, classified as sad
+		
+		for( int i = 0; i < tweets.size(); i++ ) {
+			final Tweet tweet = tweets.get( i );
+			final Boolean classification = classifications.get( i );
+			if( tweet.isHappy() ) {
+				if( classification.booleanValue() ) 
+					cell11++;
+				else 
+					cell12++;
+			} else {
+				if( !classification.booleanValue() )
+					cell22++;
+				else
+					cell21++;
+			}
+		}
+		
+		final double row1Total = cell11 + cell12;
+		final double row2Total = cell21 + cell22;
+		
+		cell11 /= row1Total;
+		cell12 /= row1Total;
+		cell21 /= row2Total;
+		cell22 /= row2Total;
+		
+		logger.log("\t\tConfusion matrix:\n"
+				+ "\t\tPredicted%12s%8s", "Happy", "Sad");
+		logger.log("\t\tActual\n"
+				+ "\t\tHappy%16.2f%%%4s%.2f%%\n"
+				+ "\t\tSad%18.2f%%%4s%.2f%%", 
+			cell11*100, "", cell12*100, 
+			cell21*100, "", cell22*100 );
 	}
 }

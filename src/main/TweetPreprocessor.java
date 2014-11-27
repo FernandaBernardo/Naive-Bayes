@@ -327,6 +327,6 @@ public final class TweetPreprocessor {
 			tweet.setText( text.trim() );
 		}
 		final long end = System.currentTimeMillis();
-		logger.log( "Tweet preprocessing took %ds", (end-start) / 1000 );
+		logger.log( "Time to preprocess tweets: %ds", (end-start) / 1000 );
 	}
 }
