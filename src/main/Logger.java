@@ -20,7 +20,7 @@ public final class Logger {
 	}
 	
 	public void flush() {
-		log( "Appending log to output file %s", outputFilePath );
+		log( "Writing log to output file %s", outputFilePath );
 		PrintWriter writer = null;
 		try {
 			final File file = new File( outputFilePath );

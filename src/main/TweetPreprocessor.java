@@ -252,9 +252,8 @@ public final class TweetPreprocessor {
 			@Override
 			public String preprocess( final String text ) {
 				result.delete( 0, result.length() );
-				final String[] terms = text.split("\\s");
 				
-				for( final String term : terms ) {
+				for( final String term : text.split("\\s") ) {
 					String partial = term; 
 					for( Map.Entry<Pattern,String> entry : replacerByPattern.entrySet() ) {
 						partial = entry.getKey().matcher( partial ).replaceAll( entry.getValue() );

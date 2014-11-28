@@ -3,6 +3,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Classe que representa um classificador bayesiano ingenuo
+ * com base nas especificacoes em
+ * 
+ * "Parte 2: Implementacao do Classificador Naive Bayes" 
+ *
+ */
 final class NaiveBayesClassifier {
 	
 	private final ClassesProbabilities probabilities;

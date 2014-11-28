@@ -15,7 +15,6 @@ public final class Main {
 		final long begin = System.currentTimeMillis();
 		final String inputFilePath;
 		final String outputFilePath;
-		// final String stopWordsPath = "stopwords_en.txt";
 		
 		if( args.length >= 2 ) {
 			inputFilePath = args[0];
@@ -27,28 +26,92 @@ public final class Main {
 		
 		logger = new Logger( outputFilePath );
 		
-		List<Tweet> tweets = getTweetsFromFile( inputFilePath );
-		//Set<String> stopWords = getStopWordsFromFile( stopWordsPath );
+		final List<Tweet> tweets = getTweetsFromFile( inputFilePath );
 		
-		TweetPreprocessor.of( tweets )
-				.toLowerCase()
-				.removeExtraSpaces()
-				.processExpressivePunctuation()
-				.removeIrrelevantPunctuation()
-				//.removeStopWords( stopWords )
-				.process();
-
-		naiveBayesClassifierWithHoldout( tweets );
+		// Para alternar execucao entre partes diferentes, descomente uma
+		// E comente a outra
 		
-//		naiveBayesClassifierWithCrossValidation( tweets );
+		// part3( tweets );
+		// part4( tweets );
+		// part5( tweets );
+		// part6( tweets );
 		
 		long endOfProgram= System.currentTimeMillis();
 		logger.log( "\nTotal time: %ds", (endOfProgram - begin) / 1000);
 		logger.flush();
 	}
 
-	@SuppressWarnings("unused")
-	private static Set<String> getStopWordsFromFile(String stopWordsPath) throws FileNotFoundException {
+	/**
+	 * Treinamento e avaliacao de desempenho do classificador bayesiano 
+	 * utilizando a abordagem Holdout
+	 */
+	private static void part3( final List<Tweet> tweets ) {
+		logger.log("Part 3:");
+		TweetPreprocessor.of( tweets )
+			.toLowerCase()
+			.removeExtraSpaces()
+			.process();
+
+		naiveBayesClassifierWithHoldout( tweets );
+	}
+	
+	/**
+	 * Treinamento e avaliacao de desempenho do classificador bayesiano 
+	 * utilizando a abordagem cross-validation
+	 */
+	private static void part4( final List<Tweet> tweets ) {
+		logger.log("Part 4:");
+		TweetPreprocessor.of( tweets )
+			.toLowerCase()
+			.removeExtraSpaces()
+			.process();
+
+		naiveBayesClassifierWithCrossValidation( tweets );
+	}
+	
+	/**
+	 * Treinamento e avaliacao de desempenho do classificador bayesiano
+	 * utilizando a abordagem Holdout e dados com stop words removidas
+	 */
+	private static void part5( final List<Tweet> tweets ) throws FileNotFoundException {
+		logger.log("Part 5:");
+		logger.log("Trying to read stopwords file from default path %s", System.getProperty( "user.dir" ) );
+		logger.log("Stopwords file must be named 'stopwords_en.txt'");
+
+		Set<String> stopWords = getStopWordsFromFile( "stopwords_en.txt" );
+		
+		TweetPreprocessor.of( tweets )
+				.toLowerCase()
+				.removeExtraSpaces()
+				.removeStopWords( stopWords )
+				.process();
+
+		naiveBayesClassifierWithHoldout( tweets );
+	}
+
+	/**
+	 * Treinamento e avaliacao de desempenho do classificador bayesiano 
+	 * utilizando a abordagem Holdout e dados pre-processados por alguma 
+	 * tecnica que leve em consideracao a aplicacao em questao (analise de 
+	 * sentimento). 
+	 */
+	private static void part6( final List<Tweet> tweets  ) {
+		logger.log("Part 6:");
+		TweetPreprocessor.of( tweets )
+			.toLowerCase()
+			.removeExtraSpaces()
+			.processExpressivePunctuation()
+			.removeIrrelevantPunctuation()
+			.process();
+
+		naiveBayesClassifierWithHoldout( tweets );
+	}
+
+	/**
+	 * Busca de um dado caminho um conjunto de stop words.
+	 */
+	private static Set<String> getStopWordsFromFile( final String stopWordsPath) throws FileNotFoundException 
+	{
 		final Scanner scanner = new Scanner( new File( stopWordsPath ) ); 
 		final Set<String> stopWords = new HashSet<>();
 		while( scanner.hasNextLine() ) {
@@ -57,7 +120,6 @@ public final class Main {
 		scanner.close();
 		return Collections.unmodifiableSet( stopWords );
 	}
-
 
 	private static List<Tweet> getTweetsFromFile( final String path ) {
 		logger.log( "Reading file from path %s", path );
@@ -72,6 +134,12 @@ public final class Main {
 		return parser.getTweets();
 	}
 	
+	/**
+	 * Constroi um classificador bayesiano ingenuo com base em uma dada
+	 * colecao de tweets de treinamento.
+	 * 
+	 * @return um {@link NaiveBayesClassifier}
+	 */
 	private static NaiveBayesClassifier getNaiveBayesClassifier( final List<Tweet> trainingList ) {
 		Vocabulary vocabulary = new Vocabulary(trainingList);
 		int happyCount = count( trainingList, true );
