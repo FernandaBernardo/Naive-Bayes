@@ -1,0 +1,236 @@
+Microsoft Windows [versão 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation. Todos os direitos reservados.
+
+C:\Users\RenanS>cd GitHub\Naive-Bayes
+
+C:\Users\RenanS\GitHub\Naive-Bayes>java -jar part3.jar
+No arguments execution. Will try to search for files at C:\Users\RenanS\GitHub\Naive-Bayes
+Reading file from path data.csv
+Time to read file: 25s
+Part 3:
+Tweet Preprocessor will execute the following algorithm:
+        0. Transform to lower case
+        1. Remove extra (useless) spaces
+
+Time to preprocess tweets: 28s
+Running Naive Bayes Classifier with holdout sampling technique
+        Total size: 1578627
+        Training size: 1052418
+        Test size: 526209
+        Happy class probability: 50,05%
+        Sad class probability: 49,95%
+        Classified with 78,11% of accuracy
+        Classified with 21,89% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,48%    26,52%
+                Sad             17,25%    82,75%
+
+Total time: 87s
+Writing log to output file defaultOutput.txt
+
+C:\Users\RenanS\GitHub\Naive-Bayes>java -jar part3.jar C:\Users\RenanS\Downloads\data.csv C:\Users\R
+enanS\Downloads\outout.txt
+Reading file from path C:\Users\RenanS\Downloads\data.csv
+Time to read file: 23s
+Part 3:
+Tweet Preprocessor will execute the following algorithm:
+        0. Transform to lower case
+        1. Remove extra (useless) spaces
+
+Time to preprocess tweets: 24s
+Running Naive Bayes Classifier with holdout sampling technique
+        Total size: 1578627
+        Training size: 1052418
+        Test size: 526209
+        Happy class probability: 49,98%
+        Sad class probability: 50,02%
+        Classified with 78,20% of accuracy
+        Classified with 21,80% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,55%    26,45%
+                Sad             17,11%    82,89%
+
+Total time: 78s
+Writing log to output file C:\Users\RenanS\Downloads\outout.txt
+
+C:\Users\RenanS\GitHub\Naive-Bayes>java -jar part4.jar C:\Users\RenanS\Downloads\data.csv C:\Users\R
+enanS\Downloads\outout.txt
+Reading file from path C:\Users\RenanS\Downloads\data.csv
+Time to read file: 24s
+Part 4:
+Tweet Preprocessor will execute the following algorithm:
+        0. Transform to lower case
+        1. Remove extra (useless) spaces
+
+Time to preprocess tweets: 24s
+Running Naive Bayes Classifier with 10-fold cross-validation sampling technique
+Running k=0 iteration, using 0 as test set.
+        Happy class probability: 50,09%
+        Sad class probability: 49,91%
+        Classified with 78,36% of accuracy
+        Classified with 21,64% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,03%    25,97%
+                Sad             17,35%    82,65%
+Running k=1 iteration, using 1 as test set.
+        Happy class probability: 50,06%
+        Sad class probability: 49,94%
+        Classified with 78,26% of accuracy
+        Classified with 21,74% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,02%    25,98%
+                Sad             17,49%    82,51%
+Running k=2 iteration, using 2 as test set.
+        Happy class probability: 50,05%
+        Sad class probability: 49,95%
+        Classified with 78,46% of accuracy
+        Classified with 21,54% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,92%    26,08%
+                Sad             16,98%    83,02%
+Running k=3 iteration, using 3 as test set.
+        Happy class probability: 50,05%
+        Sad class probability: 49,95%
+        Classified with 78,31% of accuracy
+        Classified with 21,69% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,00%    26,00%
+                Sad             17,34%    82,66%
+Running k=4 iteration, using 4 as test set.
+        Happy class probability: 50,04%
+        Sad class probability: 49,96%
+        Classified with 78,40% of accuracy
+        Classified with 21,60% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,01%    25,99%
+                Sad             17,17%    82,83%
+Running k=5 iteration, using 5 as test set.
+        Happy class probability: 50,04%
+        Sad class probability: 49,96%
+        Classified with 78,42% of accuracy
+        Classified with 21,58% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,86%    26,14%
+                Sad             16,99%    83,01%
+Running k=6 iteration, using 6 as test set.
+        Happy class probability: 50,03%
+        Sad class probability: 49,97%
+        Classified with 78,37% of accuracy
+        Classified with 21,63% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,98%    26,02%
+                Sad             17,20%    82,80%
+Running k=7 iteration, using 7 as test set.
+        Happy class probability: 50,05%
+        Sad class probability: 49,95%
+        Classified with 78,44% of accuracy
+        Classified with 21,56% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,19%    25,81%
+                Sad             17,31%    82,69%
+Running k=8 iteration, using 8 as test set.
+        Happy class probability: 50,07%
+        Sad class probability: 49,93%
+        Classified with 78,37% of accuracy
+        Classified with 21,63% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,02%    25,98%
+                Sad             17,30%    82,70%
+Running k=9 iteration, using 9 as test set.
+        Happy class probability: 50,07%
+        Sad class probability: 49,93%
+        Classified with 78,26% of accuracy
+        Classified with 21,74% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           73,97%    26,03%
+                Sad             17,45%    82,55%
+
+Final Accuracy: 78,36%
+
+Total time: 337s
+Writing log to output file C:\Users\RenanS\Downloads\outout.txt
+
+C:\Users\RenanS\GitHub\Naive-Bayes>java -jar part5.jar C:\Users\RenanS\Downloads\data.csv C:\Users\R
+enanS\Downloads\outout.txt
+Reading file from path C:\Users\RenanS\Downloads\data.csv
+Time to read file: 30s
+Part 5:
+Trying to read stopwords file from default path C:\Users\RenanS\GitHub\Naive-Bayes
+Stopwords file must be named 'stopwords_en.txt'
+Tweet Preprocessor will execute the following algorithm:
+        0. Transform to lower case
+        1. Remove extra (useless) spaces
+        2. Remove stop words
+
+Time to preprocess tweets: 60s
+Running Naive Bayes Classifier with holdout sampling technique
+        Total size: 1578627
+        Training size: 1052418
+        Test size: 526209
+        Happy class probability: 50,02%
+        Sad class probability: 49,98%
+        Classified with 75,08% of accuracy
+        Classified with 24,92% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           72,22%    27,78%
+                Sad             22,03%    77,97%
+
+Total time: 121s
+Writing log to output file C:\Users\RenanS\Downloads\outout.txt
+
+C:\Users\RenanS\GitHub\Naive-Bayes>java -jar part6.jar C:\Users\RenanS\Downloads\data.csv C:\Users\R
+enanS\Downloads\outout.txt
+Reading file from path C:\Users\RenanS\Downloads\data.csv
+Time to read file: 25s
+Part 6:
+Tweet Preprocessor will execute the following algorithm:
+        0. Transform to lower case
+        1. Remove extra (useless) spaces
+        2. Process expressive punctuation
+        3. Remove irrelevant punctuation
+
+Time to preprocess tweets: 181s
+Running Naive Bayes Classifier with holdout sampling technique
+        Total size: 1578627
+        Training size: 1052418
+        Test size: 526209
+        Happy class probability: 50,06%
+        Sad class probability: 49,94%
+        Classified with 78,57% of accuracy
+        Classified with 21,43% of true error
+                Confusion matrix:
+                Predicted       Happy     Sad
+                Actual
+                Happy           74,69%    25,31%
+                Sad             17,54%    82,46%
+
+Total time: 236s
+Writing log to output file C:\Users\RenanS\Downloads\outout.txt
+
+C:\Users\RenanS\GitHub\Naive-Bayes>

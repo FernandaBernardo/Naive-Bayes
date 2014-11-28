@@ -20,6 +20,7 @@ public final class Main {
 			inputFilePath = args[0];
 			outputFilePath = args[1];
 		} else {
+			System.out.printf("No arguments execution. Will try to search for files at %s\n", System.getProperty( "user.dir" ) );
 			inputFilePath = "data.csv";
 			outputFilePath = "defaultOutput.txt";
 		}
