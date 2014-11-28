@@ -33,7 +33,7 @@ public final class Main {
 		// E comente a outra
 		
 		// part3( tweets );
-		// part4( tweets );
+		part4( tweets );
 		// part5( tweets );
 		// part6( tweets );
 		
@@ -170,8 +170,12 @@ public final class Main {
 			logConfusionMatrix( classifications, testList );
 		}
 		
-		logger.log("\nFinal Accuracy: %.2f%%", getAccuracyAverage(acc) * 100);
-		
+		final double averageAccuracy = getAccuracyAverage(acc) * 100;
+		final double averageError = 100f - averageAccuracy;
+		logger.log("\nFinal Accuracy: %.2f%%", averageAccuracy );
+		logger.log("\nMean error: %.2f%%\nStandard error: %.8f%%", 
+				averageError, 
+				Math.sqrt( ( averageError * averageAccuracy ) / tweets.size() ) );
 	}
 
 	private static void naiveBayesClassifierWithHoldout( final List<Tweet> tweets ) {
